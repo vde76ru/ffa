@@ -11,24 +11,32 @@ abstract class BaseController
      */
     protected function validate(array $data, array $rules): array
     {
-        // Базовая валидация для критичных полей
+        $errors = [];
         $validated = [];
         
         foreach ($rules as $field => $rule) {
             $value = $data[$field] ?? null;
+            $rulesList = explode('|', $rule);
             
-            if (strpos($rule, 'required') !== false && empty($value)) {
-                throw new \InvalidArgumentException("Поле $field обязательно");
-            }
-            
-            if (strpos($rule, 'integer') !== false && $value !== null) {
-                $value = filter_var($value, FILTER_VALIDATE_INT);
-                if ($value === false) {
-                    throw new \InvalidArgumentException("Поле $field должно быть числом");
+            foreach ($rulesList as $singleRule) {
+                if ($singleRule === 'required' && empty($value)) {
+                    $errors[$field] = "Поле $field обязательно";
+                    break;
+                }
+                
+                if ($singleRule === 'integer' && $value !== null && !is_numeric($value)) {
+                    $errors[$field] = "Поле $field должно быть числом";
+                    break;
                 }
             }
             
-            $validated[$field] = $value;
+            if (!isset($errors[$field])) {
+                $validated[$field] = $value;
+            }
+        }
+        
+        if (!empty($errors)) {
+            throw new \InvalidArgumentException(json_encode($errors));
         }
         
         return $validated;

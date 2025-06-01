@@ -1,5 +1,4 @@
 // src/js/main.js
-// Главный модуль инициализации приложения
 
 import "../css/main.css";
 import "../css/shop.css";
@@ -14,27 +13,30 @@ import { renderProductsTable, copyText } from './renderProducts.js';
 import { createSpecification } from './specification.js';
 import { productsManager } from './ProductsManager.js';
 import { cartBadge } from './cart-badge.js';
+import { exportToWindow } from './utils/globalExports.js';
 
 // ===== ЭКСПОРТ ГЛОБАЛЬНЫХ ФУНКЦИЙ =====
 // Для обратной совместимости с inline скриптами
-window.showToast = showToast;
-window.renderProductsTable = renderProductsTable;
-window.copyText = copyText;
-window.createSpecification = createSpecification;
-window.loadAvailability = loadAvailability;
-window.addToCart = addToCart;
-window.clearCart = clearCart;
-window.removeFromCart = removeFromCart;
-window.fetchCart = fetchCart;
-window.filterByBrandOrSeries = filterByBrandOrSeries;
-window.applyFilters = applyFilters;
-window.clearAllFilters = clearAllFilters;
-window.productsManager = productsManager;
-window.fetchProducts = () => productsManager.fetchProducts();
-window.sortProducts = (column) => productsManager.sortProducts(column);
-window.loadPage = (page) => productsManager.loadPage(page);
-window.updateCartBadge = () => cartBadge.update();
-window.updateCartItem = updateCartItem;
+exportToWindow({
+    showToast,
+    renderProductsTable,
+    copyText,
+    createSpecification,
+    loadAvailability,
+    addToCart,
+    clearCart,
+    removeFromCart,
+    fetchCart,
+    filterByBrandOrSeries,
+    applyFilters,
+    clearAllFilters,
+    productsManager,
+    fetchProducts: () => productsManager.fetchProducts(),
+    sortProducts: (column) => productsManager.sortProducts(column),
+    loadPage: (page) => productsManager.loadPage(page),
+    updateCartBadge: () => cartBadge.update(),
+    updateCartItem
+});
 
 // ===== CSRF TOKEN =====
 window.CSRF_TOKEN = window.APP_CONFIG?.csrfToken || '';

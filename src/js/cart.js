@@ -47,7 +47,7 @@ export async function removeFromCart(productId) {
     try {
         const formData = new FormData();
         formData.append('productId', productId);
-        formData.append('csrf_token', window.APP_CONFIG?.csrfToken || window.CSRF_TOKEN || '');
+        formData.append('csrf_token', window.APP_CONFIG?.csrfToken || '');
         
         const res = await fetch("/cart/remove", {
             method: "POST",

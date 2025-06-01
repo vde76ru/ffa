@@ -8,38 +8,44 @@ ini_set('log_errors', '1');
 
 // Загружаем autoloader
 require_once __DIR__ . '/../vendor/autoload.php';
+try {
+    \App\Core\Bootstrap::init();
+} catch (\Exception $e) {
+    error_log("Critical init error: " . $e->getMessage());
+    http_response_code(500);
+    die('System temporarily unavailable');
+}
 
 // Минимальная инициализация
 try {
-    // 1. Config
+    // 1. Config - всегда первый
     \App\Core\Config::get('app.name');
     
-    // 2. Cache (опционально)
+    // 2. Logger БЕЗ использования БД (файловое логирование)
+    \App\Core\Logger::initialize();
+    
+    // 3. Database - теперь может использовать Logger
+    \App\Core\Database::getConnection();
+    
+    // 4. Cache - может использовать и Logger и Database
     if (class_exists('\App\Core\Cache')) {
         \App\Core\Cache::init();
     }
     
-    // 3. Security headers
+    // 5. Security
     if (class_exists('\App\Core\SecurityManager')) {
         \App\Core\SecurityManager::initialize();
     }
     
-    // 4. Session
+    // 6. Session - в самом конце
     \App\Core\Session::start();
     
-    // 5. Database
-    \App\Core\Database::getConnection();
-    
-    // 6. Logger (после БД)
-    if (class_exists('\App\Core\Logger')) {
-        \App\Core\Logger::initialize();
-    }
-
 } catch (\Exception $e) {
-    error_log("Critical init error: " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine());
+    error_log("Critical init error: " . $e->getMessage());
     http_response_code(500);
     die('System temporarily unavailable');
 }
+
 
 // Импорты контроллеров
 use App\Core\Router;

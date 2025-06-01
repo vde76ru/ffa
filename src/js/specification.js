@@ -3,7 +3,7 @@ import { fetchCart } from "./cart.js";
 
 export async function createSpecification() {
     const formData = new FormData();
-    formData.append('csrf_token', window.CSRF_TOKEN);
+    formData.append('csrf_token', window.APP_CONFIG?.csrfToken || '');
 
     try {
         const res = await fetch('/specification/create', {

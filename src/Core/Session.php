@@ -6,6 +6,7 @@ use App\Core\Database;
 use App\Core\DBSessionHandler;
 use App\Services\AuthService;
 use App\Services\AuditService;
+use App\Core\Logger; // Убедитесь, что класс Logger доступен
 
 class Session
 {
@@ -92,6 +93,11 @@ class Session
         if (!isset($_SESSION['FINGERPRINT'])) {
             $_SESSION['FINGERPRINT'] = $fingerprint;
         } elseif ($_SESSION['FINGERPRINT'] !== $fingerprint) {
+            // Добавляем логирование перед уничтожением сессии
+            Logger::warning('Session fingerprint mismatch', [
+                'old' => $_SESSION['FINGERPRINT'],
+                'new' => $fingerprint
+            ]);
             self::logout();
             session_start(); // создаём новую сессию
         }

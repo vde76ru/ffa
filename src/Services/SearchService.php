@@ -662,13 +662,8 @@ class SearchService
         if (self::$client === null) {
             self::$client = ClientBuilder::create()
                 ->setHosts(['localhost:9200'])
-                ->setRetries(3)                    // Больше попыток
-                ->setConnectionParams([
-                    'timeout' => 20,               // HTTP timeout
-                    'connect_timeout' => 5,        // Connection timeout
-                    'client_timeout' => 25         // Общий timeout клиента
-                ])
-                ->setHandler(\OpenSearch\ClientBuilder::singleHandler()) // Одиночный обработчик
+                ->setRetries(3)
+                ->setConnectionParams(['timeout' => 5])
                 ->build();
         }
         return self::$client;

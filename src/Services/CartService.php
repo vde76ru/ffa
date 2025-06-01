@@ -528,7 +528,7 @@ class CartService
     private static function loadFromSession(): array
     {
         if (session_status() !== PHP_SESSION_ACTIVE) {
-            session_start();
+            \App\Core\Session::start(); // Используем централизованный метод
         }
         
         return $_SESSION[self::SESSION_KEY] ?? [];

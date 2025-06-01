@@ -80,14 +80,10 @@ class MetricsService
             Database::query(
                 "INSERT INTO metrics (metric_type, data, value, created_at) 
                  VALUES (?, ?, ?, NOW())",
-                [
-                    $type,
-                    json_encode($data, JSON_UNESCAPED_UNICODE),
-                    $value
-                ]
+                [$type, json_encode($data, JSON_UNESCAPED_UNICODE), $value]
             );
         } catch (\Exception $e) {
-            // Игнорируем ошибки записи метрик
+            // Используем error_log вместо Logger чтобы избежать рекурсии
             error_log('Failed to save metric: ' . $e->getMessage());
         }
     }
